@@ -26,6 +26,11 @@ class BuildImageCommand extends Command {
       help: 'Runs build app before',
       defaultsTo: true,
     );
+    argParser.addFlag(
+      'name',
+      abbr: 'n',
+      help: 'The name of the docker image',
+    );
   }
 
   @override
@@ -44,6 +49,7 @@ class BuildImageCommand extends Command {
       environment: env,
       workingDirectoryPath:
           SidekickContext.projectRoot.directory('server').path,
+      containerName: argResults!['name'] as String?,
     );
   }
 }

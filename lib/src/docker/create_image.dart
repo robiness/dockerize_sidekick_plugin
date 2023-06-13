@@ -15,12 +15,13 @@ Future<void> createDockerImage({
   required Logger logger,
   required EnvironmentBase environment,
   bool buildFlutter = true,
+  String? containerName,
 
   /// Build arguments to pass into the docker command
   /// `--build-arg` will be added to each argument automatically
   List<String> buildArgs = const [],
 }) async {
-  final containerName = mainProjectName ?? mainProject!.name;
+  final _containerName = containerName ?? mainProjectName ?? mainProject!.name;
   if (buildFlutter) {
     final buildProgess = logger.progress(
       '[dockerize] Building Flutter App',
@@ -69,7 +70,7 @@ Future<void> createDockerImage({
   );
 
   final buildProgess = logger.progress(
-    '[dockerize] Creating image $containerName:${environment.name}',
+    '[dockerize] Creating image $_containerName:${environment.name}',
   );
 
   final process = await io.Process.run(
@@ -78,7 +79,7 @@ Future<void> createDockerImage({
       'build',
       for (final buildArg in buildArgs) ...['--build-arg', buildArg],
       '-t',
-      '$containerName:${environment.name}',
+      '$_containerName:${environment.name}',
       '.',
     ],
     workingDirectory: workingDirectoryPath,
@@ -92,6 +93,6 @@ Future<void> createDockerImage({
   }
   garbageCollector(logger: logger);
   logger.info(
-    '${lightGreen.wrap('✓')} [dockerize] image name: ${lightGreen.wrap(styleBold.wrap('$containerName:${environment.name}'))}',
+    '${lightGreen.wrap('✓')} [dockerize] image name: ${lightGreen.wrap(styleBold.wrap('$_containerName:${environment.name}'))}',
   );
 }
